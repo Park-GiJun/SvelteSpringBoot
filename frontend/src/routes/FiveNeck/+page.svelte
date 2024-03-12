@@ -1,6 +1,6 @@
 <script>
 	let cols = Array.from({ length: 8 }, (_, i) => i);
-	let rows = Array.from({ length: 8 }, (_, i) => i);
+	let rows = Array.from({ length: 15 }, (_, i) => i);
 
 	function colorChange(x, y) {
 
@@ -23,8 +23,8 @@
         border-collapse: collapse;
         margin: 0;
         padding: 5px;
-        width: 50px;
-        height: 50px;
-        background: bisque;
+        width: 20px;
+        height: 20px;
+        background: black;
     }
 </style>
