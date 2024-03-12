@@ -1,10 +1,9 @@
 <script>
-	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { count } from './input.js';
 	import { get } from 'svelte/store';
 	import { answer } from './answer.js';
 
-	const dispatch = createEventDispatcher();
 	const numbers = Array.from({length: 9}, (_, i) => i + 1);
 
 	let display = answer;
@@ -58,7 +57,8 @@
 			}
 		}
 		if (answer.toString().length > 16) {
-			display.set("값이 너무 깁니다.")
+			answer = answer.toString().substring(0, 15);
+			display.set(answer.toString());
 		} else {
 			display.set(answer.toString());
 		}
@@ -146,6 +146,6 @@
     .equalBtn{
 				margin: 5px;
 				width: 25.5em;
-				height: 3em;
+				height: 6em;
 		}
 </style>

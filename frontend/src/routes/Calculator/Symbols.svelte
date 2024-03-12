@@ -2,6 +2,11 @@
 import {count} from './input.js';
 import {onDestroy, onMount} from "svelte";
 
+let count_value;
+count.subscribe((value => {
+	count_value  = value;
+}));
+
 	function addArithmetic(value) {
 		count.update(n => n + ' ' + value + ' ');
 	}
@@ -11,7 +16,12 @@ import {onDestroy, onMount} from "svelte";
 	function handleKeydown(event) {
 		const key = event.key;
 		if (symbols.includes(key)) {
-			addArithmetic(key);
+			const check = count_value.charAt(count_value.length - 1);
+			if (check === ' ' || count_value === '') {
+
+			} else{
+				addArithmetic(key);
+			}
 		}
 	}
 
