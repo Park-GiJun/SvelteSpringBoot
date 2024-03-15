@@ -1,11 +1,21 @@
 <script>
 	import { onMount } from 'svelte';
 	import { Piece } from './Piece.js';
+	import { score } from './Score.js';
 
 	let canvas;
 	const COLS = 11;
 	const ROWS = 20;
 	const BLOCK_SIZE = 30;
+
+	let score_value;
+
+	score.subscribe(value => score_value = value);
+
+	function updateScore(value){
+		score.update(n => n + value);
+	}
+
 
 	class Board {
 		grid;
@@ -32,7 +42,7 @@
 				this.grid.unshift(Array(COLS).fill(0));
 			});
 
-			// return linesToRemove.length;
+			return linesToRemove.length*linesToRemove;
 		}
 
 
@@ -53,7 +63,7 @@
 		if (interval) {
 			clearInterval(interval);
 		}
-		console.table(board.grid);
+		score.set(0);
 	}
 
 	function play() {
@@ -85,11 +95,12 @@
 		}
 
 		function update() {
-			board.removeLines();
 			if (piece.moveDown(board)) {
 				piece.lock(board);
 				piece = new Piece(ctx);
 			}
+			const removedLines = board.removeLines();
+			updateScore(removedLines);
 			draw();
 		}
 
@@ -132,6 +143,7 @@
 </div>
 <button on:click={play}>Start</button>
 <button on:click={stopGame}>Stop</button>
+<p>{score_value}</p>
 
 <style>
     .play-board {

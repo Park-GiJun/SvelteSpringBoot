@@ -165,7 +165,6 @@ class Piece {
 				}
 			});
 		});
-		console.table(board.grid);
 	}
 }
 
