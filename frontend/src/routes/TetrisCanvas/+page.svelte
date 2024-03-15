@@ -1,12 +1,12 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { Piece } from './Piece.js';
 	import { score } from './Score.js';
 
 	let canvas;
 	const COLS = 11;
 	const ROWS = 20;
-	const BLOCK_SIZE = 30;
+	const BLOCK_SIZE = 35;
 
 	let score_value;
 
@@ -36,13 +36,12 @@
 					linesToRemove.push(y);
 				}
 			}
-
 			linesToRemove.forEach(line => {
 				this.grid.splice(line, 1);
 				this.grid.unshift(Array(COLS).fill(0));
 			});
 
-			return linesToRemove.length*linesToRemove;
+			return linesToRemove.length*linesToRemove.length*100;
 		}
 
 
@@ -100,6 +99,8 @@
 				piece = new Piece(ctx);
 			}
 			const removedLines = board.removeLines();
+			if (removedLines > 0) {
+			}
 			updateScore(removedLines);
 			draw();
 		}
