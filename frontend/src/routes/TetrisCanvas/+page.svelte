@@ -1,5 +1,5 @@
 <script>
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { Piece } from './Piece.js';
 	import { score } from './Score.js';
 
@@ -80,6 +80,13 @@
 			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 			piece.draw();
 			drawBoard();
+			console.table(board.grid);
+			for (let i = 0; i < 10; i++) {
+				if(board.grid[0][i] === 2){
+					alert('게임오버');
+				}
+			}
+
 		}
 
 		function drawBoard() {

@@ -150,7 +150,6 @@ class Piece {
 		}
 	}
 
-
 	lock(board) {
 		this.shape.forEach((row, y) => {
 			row.forEach((value, x) => {
