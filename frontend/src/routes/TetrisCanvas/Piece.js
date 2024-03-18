@@ -123,6 +123,15 @@ class Piece {
 		return false;
 	}
 
+	moveBottom(board) {
+		while (!this.collision(board)) {
+			this.y++;
+		}
+		this.y--;
+		return true;
+	}
+
+
 	rotate(board) {
 		let newShape = this.shape.map((row) => [...row]);
 		let n = newShape.length;
@@ -149,6 +158,39 @@ class Piece {
 			this.y = originalY;
 		}
 	}
+
+	reverseRotate(board) {
+		let newShape = this.shape.map((row) => [...row]);
+		let n = newShape.length;
+
+		for (let y = 0; y < n; y++) {
+			for (let x = 0; x < y; x++) {
+				[newShape[x][y], newShape[y][x]] = [newShape[y][x], newShape[x][y]];
+			}
+		}
+
+		for (let x = 0; x < n; x++) {
+			for (let y = 0; y < n / 2; y++) {
+				[newShape[y][x], newShape[n - 1 - y][x]] = [newShape[n - 1 - y][x], newShape[y][x]];
+			}
+		}
+
+		let originalX = this.x;
+		let originalY = this.y;
+		this.shape = newShape;
+
+		if (this.collision(board)) {
+			this.shape = newShape.map((row) => [...row]).reverse().map(row => row.reverse());
+			for (let y = 0; y < n; y++) {
+				for (let x = 0; x < n / 2; x++) {
+					[this.shape[y][x], this.shape[y][n - 1 - x]] = [this.shape[y][n - 1 - x], this.shape[y][x]];
+				}
+			}
+			this.x = originalX;
+			this.y = originalY;
+		}
+	}
+
 
 	lock(board) {
 		this.shape.forEach((row, y) => {
