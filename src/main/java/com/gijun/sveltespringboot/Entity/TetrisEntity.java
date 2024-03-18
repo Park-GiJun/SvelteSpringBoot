@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Tetris") // 테이블 이름을 명시적으로 지정
+@Table(name = "Tetris")
 @Getter
 @Setter
 public class TetrisEntity {
