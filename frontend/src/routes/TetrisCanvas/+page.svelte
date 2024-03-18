@@ -6,8 +6,8 @@
 
     let canvas;
     const COLS = 11;
-    const ROWS = 20;
-    const BLOCK_SIZE = 35;
+    const ROWS = 25;
+    const BLOCK_SIZE = 30;
 
     let score_value;
     let level_value;
@@ -30,17 +30,12 @@
         score.update(n => n + value);
     }
 
-    function updateLevel(removedLines) {
-        clear_lines += removedLines;
+    function updateLevel(clear_lines) {
         while (clear_lines >= 10) {
             clear_lines -= 10;
             level.update(n => n + 1);
         }
     }
-
-
-
-
 
     class Board {
         grid;
@@ -69,7 +64,7 @@
             clear_lines += removedLines;
             if (clear_lines >= 10) {
                 console.log("clearLine >= 10");
-                updateLevel();
+                updateLevel(clear_lines);
             }
             console.log(level_value + " " + clear_lines);
             return linesToRemove.length * linesToRemove.length * 100;
@@ -196,19 +191,19 @@
             }
             updateScore(removedLines);
             draw();
+            updateGameSpeed();
         }
 
         function updateGameSpeed() {
             level.subscribe(value => {
                 level_value = value;
-                timeInterval = Math.max(200, 1000 - (level_value * 100));
+                timeInterval = Math.max(200, 1100 - (level_value * 100));
                 if (interval) clearInterval(interval);
                 interval = setInterval(update, timeInterval);
             });
         }
 
 
-        updateGameSpeed();
 
 
         level.subscribe(value => {

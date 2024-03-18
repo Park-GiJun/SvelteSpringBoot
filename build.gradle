@@ -45,5 +45,16 @@ tasks.register('buildFrontend', NpmTask) {
     args = ['run', 'build']
 }
 
-processResources.dependsOn buildFrontend
+tasks.register('copyIndex') {
+    dependsOn 'buildFrontend'
+    doLast {
+        copy {
+            from "$projectDir/frontend/build"
+            into "$projectDir/src/main/resources/static"
+        }
+    }
+}
+
+processResources.dependsOn 'copyIndex'
+
 

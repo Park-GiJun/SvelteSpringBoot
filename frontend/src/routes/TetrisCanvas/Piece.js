@@ -1,5 +1,5 @@
 const COLS = 11;
-const ROWS = 20;
+const ROWS = 25;
 
 class Piece {
 	x;
