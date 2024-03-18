@@ -30,11 +30,8 @@
         score.update(n => n + value);
     }
 
-    function updateLevel(clear_lines) {
-        while (clear_lines >= 10) {
-            clear_lines -= 10;
+    function updateLevel() {
             level.update(n => n + 1);
-        }
     }
 
     class Board {
@@ -64,7 +61,8 @@
             clear_lines += removedLines;
             if (clear_lines >= 10) {
                 console.log("clearLine >= 10");
-                updateLevel(clear_lines);
+                clear_lines -= 10;
+                updateLevel();
             }
             console.log(level_value + " " + clear_lines);
             return linesToRemove.length * linesToRemove.length * 100;
@@ -129,12 +127,14 @@
         if (interval) {
             clearInterval(interval);
         }
+        clear_lines = 0;
         score.set(0);
         level.set(1);
     }
 
     function play() {
         board.reset();
+        clear_lines = 0;
         score.set(0);
         level.set(1);
         const ctx = canvas.getContext('2d');
@@ -278,6 +278,7 @@
         <button on:click={stopGame}>Stop</button>
         <p>점수: {score_value}</p>
         <p>레벨: {level_value}</p>
+        <p>제거한 줄 : {clear_lines}</p>
         <p>
             ← → : 좌우 이동
             <br/>
@@ -373,7 +374,6 @@
     }
 
     .leaderboard {
-        margin-top: 20px;
         border-collapse: collapse;
         width: 100%;
     }
