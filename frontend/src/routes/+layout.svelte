@@ -2,8 +2,8 @@
 	<a href="/">home</a>
 	<a href="/about">about</a>
 	<a href="/Calculator">Cal</a>
-	<a href="/Tetris">Tetris</a>
-	<a href="/TetrisCanvas">TetrisCanvas</a>
+	<a href="/TetrisCanvas">Tetris</a>
+	<a href="/Chess">Chess</a>
 </nav>
 
 <main>

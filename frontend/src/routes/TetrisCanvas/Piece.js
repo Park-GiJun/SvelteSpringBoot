@@ -7,44 +7,7 @@ class Piece {
 	color;
 	shape;
 	ctx;
-	BLOCKS = [
-		[
-			[0, 0, 2, 0],
-			[0, 0, 2, 0],
-			[0, 0, 2, 0],
-			[0, 0, 2, 0]
-		],
-		[
-			[2, 2, 2],
-			[0, 2, 0],
-			[0, 0, 0]
-		],
-		[
-			[2, 0, 0],
-			[2, 0, 0],
-			[2, 2, 0]
-		],
-		[
-			[0, 0, 2],
-			[0, 0, 2],
-			[0, 2, 2]
-		],
-		[
-			[0, 2, 2],
-			[0, 2, 2],
-			[0, 0, 0]
-		],
-		[
-			[2, 2, 0],
-			[0, 2, 2],
-			[0, 0, 0]
-		],
-		[
-			[0, 2, 2],
-			[2, 2, 0],
-			[0, 0, 0]
-		]
-	];
+	BLOCKS = [[[0, 0, 2, 0], [0, 0, 2, 0], [0, 0, 2, 0], [0, 0, 2, 0]], [[0, 2, 0], [2, 2, 2], [0, 0, 0]], [[0, 2, 0], [0, 2, 0], [0, 2, 2]], [[0, 2, 0], [0, 2, 0], [2, 2, 0]], [[2, 2], [2, 2]], [[2, 2, 0], [0, 2, 2], [0, 0, 0]], [[0, 2, 2], [2, 2, 0], [0, 0, 0]]];
 
 	COLORS = ['cyan', 'blue', 'orange', 'yellow', 'green', 'purple', 'red'];
 
@@ -62,7 +25,7 @@ class Piece {
 		this.color = (this.COLORS)[typeId];
 		this.shape = (this.BLOCKS)[typeId];
 
-		this.x = 3;
+		this.x = 4;
 		this.y = 0;
 	}
 
@@ -72,6 +35,16 @@ class Piece {
 			row.forEach((value, x) => {
 				if (value > 0) {
 					this.ctx.fillRect(this.x + x, this.y + y, 1, 1);
+
+					this.ctx.strokeStyle = 'BLACK';
+					this.ctx.lineWidth = 0.009;
+					this.ctx.zIndex = 10;
+
+					for (let gx = 0; gx < 1; gx += 1) {
+						for (let gy = 0; gy < 1; gy += 1) {
+							this.ctx.strokeRect(this.x + x + gx, this.y + y + gy, 1, 1);
+						}
+					}
 				}
 			});
 		});
@@ -131,11 +104,9 @@ class Piece {
 		return true;
 	}
 
-
 	rotate(board) {
-		let newShape = this.shape.map((row) => [...row]);
+		let newShape = this.shape.map(row => [...row]);
 		let n = newShape.length;
-
 		for (let y = 0; y < n; y++) {
 			for (let x = 0; x < y; x++) {
 				[newShape[x][y], newShape[y][x]] = [newShape[y][x], newShape[x][y]];
@@ -148,30 +119,35 @@ class Piece {
 		this.shape = newShape;
 
 		if (this.collision(board)) {
-			this.shape = newShape.map((row) => [...row]).reverse().map(row => row.reverse());
-			for (let y = 0; y < n; y++) {
-				for (let x = 0; x < n / 2; x++) {
-					[this.shape[y][x], this.shape[y][n - 1 - x]] = [this.shape[y][n - 1 - x], this.shape[y][x]];
+			let kicked = false;
+			for (let i = -1; i <= 1; i++) {
+				this.x += i;
+				if (!this.collision(board)) {
+					kicked = true;
+					break;
 				}
+				this.x = originalX;
 			}
-			this.x = originalX;
-			this.y = originalY;
+			if (!kicked) {
+				this.shape = this.shape.map(row => [...row]).reverse().map(row => row.reverse());
+				for (let y = 0; y < n; y++) {
+					for (let x = 0; x < n / 2; x++) {
+						[this.shape[y][x], this.shape[y][n - 1 - x]] = [this.shape[y][n - 1 - x], this.shape[y][x]];
+					}
+				}
+				this.x = originalX;
+				this.y = originalY;
+			}
 		}
 	}
 
 	reverseRotate(board) {
-		let newShape = this.shape.map((row) => [...row]);
+		let newShape = this.shape.map(row => [...row]);
 		let n = newShape.length;
-
+		newShape.forEach(row => row.reverse());
 		for (let y = 0; y < n; y++) {
 			for (let x = 0; x < y; x++) {
 				[newShape[x][y], newShape[y][x]] = [newShape[y][x], newShape[x][y]];
-			}
-		}
-
-		for (let x = 0; x < n; x++) {
-			for (let y = 0; y < n / 2; y++) {
-				[newShape[y][x], newShape[n - 1 - y][x]] = [newShape[n - 1 - y][x], newShape[y][x]];
 			}
 		}
 
@@ -180,17 +156,29 @@ class Piece {
 		this.shape = newShape;
 
 		if (this.collision(board)) {
-			this.shape = newShape.map((row) => [...row]).reverse().map(row => row.reverse());
-			for (let y = 0; y < n; y++) {
-				for (let x = 0; x < n / 2; x++) {
-					[this.shape[y][x], this.shape[y][n - 1 - x]] = [this.shape[y][n - 1 - x], this.shape[y][x]];
+			let kicked = false;
+			for (let i = -1; i <= 1; i++) {
+				this.x += i;
+				if (!this.collision(board)) {
+					kicked = true;
+					break;
 				}
+				this.x = originalX;
 			}
-			this.x = originalX;
-			this.y = originalY;
+			if (!kicked) {
+				this.shape.forEach(row => row.reverse());
+				for (let y = 0; y < n; y++) {
+					for (let x = 0; x < y; x++) {
+						[this.shape[x][y], this.shape[y][x]] = [this.shape[y][x], this.shape[x][y]];
+					}
+				}
+				this.shape.forEach(row => row.reverse());
+
+				this.x = originalX;
+				this.y = originalY;
+			}
 		}
 	}
-
 
 	lock(board) {
 		this.shape.forEach((row, y) => {
