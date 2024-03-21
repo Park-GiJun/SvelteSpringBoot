@@ -19,8 +19,8 @@
 		ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
 
 		const ctx2 = nextBlockCanvas.getContext('2d');
-		ctx2.canvas.width = 5 * BLOCK_SIZE;
-		ctx2.canvas.height = 5 * BLOCK_SIZE;
+		ctx2.canvas.width = 3 * BLOCK_SIZE;
+		ctx2.canvas.height = 4 * BLOCK_SIZE;
 		ctx2.scale(BLOCK_SIZE, BLOCK_SIZE);
 	});
 
@@ -183,8 +183,8 @@
 		ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
 
 		const ctx2 = nextBlockCanvas.getContext('2d');
-		ctx2.canvas.width = 5 * BLOCK_SIZE;
-		ctx2.canvas.height = 5 * BLOCK_SIZE;
+		ctx2.canvas.width = 3 * BLOCK_SIZE;
+		ctx2.canvas.height = 4 * BLOCK_SIZE;
 		ctx2.scale(BLOCK_SIZE, BLOCK_SIZE);
 
 
@@ -326,7 +326,7 @@
 		<button disabled={showModal} on:click={stopGame}>Stop</button>
 		<p>점수: {score_value}</p>
 		<p>레벨: {level_value}</p>
-		<p>제거한 줄 : {clear_lines+(level_value-1)*10}</p>
+		<p>제거한 줄 : {clear_lines + (level_value - 1) * 10}</p>
 		<p>
 			← → : 좌우 이동
 			<br />
