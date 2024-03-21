@@ -7,12 +7,16 @@ class Piece {
 	color;
 	shape;
 	ctx;
-	BLOCKS = [[[0, 0, 2, 0], [0, 0, 2, 0], [0, 0, 2, 0], [0, 0, 2, 0]], [[0, 2, 0], [2, 2, 2], [0, 0, 0]], [[0, 2, 0], [0, 2, 0], [0, 2, 2]], [[0, 2, 0], [0, 2, 0], [2, 2, 0]], [[2, 2], [2, 2]], [[2, 2, 0], [0, 2, 2], [0, 0, 0]], [[0, 2, 2], [2, 2, 0], [0, 0, 0]]];
+	ctx2;
+	BLOCKS = [[[0, 2, 0, 0], [0, 2, 0, 0], [0, 2, 0, 0], [0, 2, 0, 0]], [[0, 2, 0], [2, 2, 2], [0, 0, 0]], [[0, 2, 0], [0, 2, 0], [0, 2, 2]], [[0, 2, 0], [0, 2, 0], [2, 2, 0]], [[2, 2], [2, 2]], [[2, 2, 0], [0, 2, 2], [0, 0, 0]], [[0, 2, 2], [2, 2, 0], [0, 0, 0]]];
 
 	COLORS = ['cyan', 'blue', 'orange', 'yellow', 'green', 'purple', 'red'];
 
-	constructor(ctx) {
+	nextPiece = null;
+
+	constructor(ctx, ctx2) {
 		this.ctx = ctx;
+		this.ctx2 = ctx2;
 		this.spawn();
 	}
 
@@ -21,13 +25,35 @@ class Piece {
 	}
 
 	spawn() {
-		const typeId = this.randomizeType(this.COLORS.length);
+		const typeId = this.randomizeType((this.COLORS.length));
 		this.color = (this.COLORS)[typeId];
 		this.shape = (this.BLOCKS)[typeId];
 
 		this.x = 4;
 		this.y = 0;
 	}
+
+	spawnNextBlock() {
+		const typeId = this.randomizeType((this.COLORS.length));
+		this.color = (this.COLORS)[typeId];
+		this.shape = (this.BLOCKS)[typeId];
+
+		this.x = 4;
+		this.y = 1;
+	}
+
+	drawNextBlock(context) {
+		context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+		context.fillStyle = this.color;
+		this.shape.forEach((row, y) => {
+			row.forEach((value, x) => {
+				if (value > 0) {
+					context.fillRect(x, y, 1, 1);
+				}
+			});
+		});
+	}
+
 
 	draw() {
 		this.ctx.fillStyle = this.color;

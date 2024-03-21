@@ -9,6 +9,7 @@
 	}
 
 	let canvas;
+	let nextBlockCanvas;
 
 	onMount(() => {
 
@@ -16,6 +17,11 @@
 		ctx.canvas.width = COLS * BLOCK_SIZE;
 		ctx.canvas.height = ROWS * BLOCK_SIZE;
 		ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
+
+		const ctx2 = nextBlockCanvas.getContext('2d');
+		ctx2.canvas.width = 5 * BLOCK_SIZE;
+		ctx2.canvas.height = 5 * BLOCK_SIZE;
+		ctx2.scale(BLOCK_SIZE, BLOCK_SIZE);
 	});
 
 	const COLS = 11;
@@ -24,7 +30,7 @@
 
 	let score_value;
 	let level_value;
-	let timeInterval = 1000;
+	let timeInterval = 800;
 
 	let clear_lines = 0;
 
@@ -34,11 +40,10 @@
 
 	let nickname = '';
 	let showModal = false;
+	let isGameStarted = false;
 
 	score.subscribe(value => score_value = value);
 	level.subscribe(value => level_value = value);
-
-	let isGameStarted = false;
 
 	function startOrResetGame() {
 		if (isGameStarted) {
@@ -83,7 +88,6 @@
 			let removedLines = linesToRemove.length;
 			clear_lines += removedLines;
 			if (clear_lines >= 10) {
-				console.log('clearLine >= 10');
 				clear_lines -= 10;
 				updateLevel();
 			}
@@ -178,6 +182,11 @@
 		ctx.canvas.height = ROWS * BLOCK_SIZE;
 		ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
 
+		const ctx2 = nextBlockCanvas.getContext('2d');
+		ctx2.canvas.width = 5 * BLOCK_SIZE;
+		ctx2.canvas.height = 5 * BLOCK_SIZE;
+		ctx2.scale(BLOCK_SIZE, BLOCK_SIZE);
+
 
 		let piece = new Piece(ctx);
 		if (piece.collision(board)) {
@@ -185,6 +194,7 @@
 			return;
 		}
 		piece.draw();
+		piece.drawNextBlock(ctx2);
 
 		function draw() {
 			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -239,7 +249,7 @@
 		function updateGameSpeed() {
 			level.subscribe(value => {
 				level_value = value;
-				timeInterval = Math.max(200, 1100 - (level_value * 100));
+				timeInterval = Math.max(200, timeInterval - (level_value * 100));
 				if (interval) clearInterval(interval);
 				interval = setInterval(update, timeInterval);
 			});
@@ -303,6 +313,7 @@
 	onDestroy(() => {
 		stopGame();
 	});
+
 </script>
 
 
@@ -325,6 +336,10 @@
 			<br />
 			Z : 떨어뜨리기
 		</p>
+		<div class="next-block-division">
+			<canvas bind:this={nextBlockCanvas} class="next-block"></canvas>
+		</div>
+
 	</div>
 	<div class="leaderboard-container">
 		<table class="leaderboard">
@@ -455,5 +470,11 @@
         align-items: center;
         z-index: 999;
     }
+
+    .next-block {
+        border: solid 1px #444;
+        background-color: #f0f0f0;
+    }
+
 </style>
 
