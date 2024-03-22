@@ -1,22 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
 	import { nickName } from '../Chess/NickName.js';
+	import { ChessUnit } from './ChessUnit.js';
 
-	class ChessUnit {
-		constructor(side, color, grade, svg, position) {
-			this.side = side;
-			this.color = color;
-			this.grade = grade;
-			this.svg = svg;
-			this.position = position;
-		}
-
-		getSvgBlob() {
-			return new Blob([this.svg], { type: 'image/svg+xml;charset=utf-8' });
-		}
-
-
-	}
 
 	let units = [
 		new ChessUnit('Center','Black', 'King', `
