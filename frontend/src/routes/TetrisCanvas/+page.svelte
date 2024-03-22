@@ -206,7 +206,6 @@
 					alert('게임오버');
 				}
 			}
-
 		}
 
 		function drawBoard() {
@@ -477,4 +476,3 @@
     }
 
 </style>
-

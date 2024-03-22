@@ -31,6 +31,8 @@ class Piece {
 
 		this.x = 4;
 		this.y = 0;
+
+		this.spawnNextBlock()
 	}
 
 	spawnNextBlock() {
@@ -39,7 +41,7 @@ class Piece {
 		this.shape = (this.BLOCKS)[typeId];
 
 		this.x = 4;
-		this.y = 1;
+		this.y = 0;
 	}
 
 	drawNextBlock(context) {
@@ -49,6 +51,16 @@ class Piece {
 			row.forEach((value, x) => {
 				if (value > 0) {
 					context.fillRect(x, y, 1, 1);
+
+					this.ctx.strokeStyle = 'BLACK';
+					this.ctx.lineWidth = 0.009;
+					this.ctx.zIndex = 10;
+
+					for (let gx = 0; gx < 1; gx += 1) {
+						for (let gy = 0; gy < 1; gy += 1) {
+							this.ctx.strokeRect(this.x + x + gx, this.y + y + gy, 1, 1);
+						}
+					}
 				}
 			});
 		});
