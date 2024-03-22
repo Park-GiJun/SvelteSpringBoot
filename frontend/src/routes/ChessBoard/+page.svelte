@@ -14,6 +14,8 @@
 		getSvgBlob() {
 			return new Blob([this.svg], { type: 'image/svg+xml;charset=utf-8' });
 		}
+
+
 	}
 
 	let units = [
@@ -50,10 +52,31 @@
 				const image = new Image();
 				image.onload = function() {
 					ctx.drawImage(image, unit.position.x * tileSize, unit.position.y * tileSize, tileSize, tileSize);
+					ctx.canvas.addEventListener('click', function(event) {
+						const rect = canvas.getBoundingClientRect();
+						const x = event.clientX - rect.left;
+						const y = event.clientY - rect.top;
+						if(x >= unit.position.x * tileSize && x <= (unit.position.x + 1) * tileSize && y >= unit.position.y * tileSize && y <= (unit.position.y + 1) * tileSize) {
+
+							switch (unit.grade) {
+								case 'King' :{
+									console.log('King Clicked');
+									console.log('Unit Position : ' + unit.position.x + ' ' + unit.position.y);
+									break;
+								}
+								case 'Queen' :{
+									console.log('Queen Clicked');
+									console.log('Unit Position : ' + unit.position.x + ' ' + unit.position.y);
+									break;
+								}
+							}
+						}
+					});
 					URL.revokeObjectURL(url);
 				};
 				image.src = url;
 			});
+
 		}
 	}
 
@@ -62,3 +85,9 @@
 
 <p>{$nickName}</p>
 <canvas height="600" id="chessboard" width="600"></canvas>
+
+<style>
+	#chessboard{
+			border: black 1px solid;
+	}
+</style>
