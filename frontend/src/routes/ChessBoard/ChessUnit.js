@@ -11,6 +11,13 @@ class ChessUnit {
 		return new Blob([this.svg], { type: 'image/svg+xml;charset=utf-8' });
 	}
 
+	updatePosition(x, y){
+		this.position.x += x;
+		this.position.y += y;
+
+		console.log(this.position.x + ' ' + this.position.y);
+	}
+
 	getMovablePositions(allUnits) {
 		switch (this.grade) {
 			case 'Queen':
