@@ -336,7 +336,7 @@
 			});
 			if (isMovablePositionClicked) {
 
-				ctxUnits.clearRect(selectedUnit.position.x, selectedUnit.y, tileSize / 8, tileSize / 8);
+				ctxUnits.clearRect(selectedUnit.position.x * tileSize, selectedUnit.position.y * tileSize, tileSize, tileSize);
 				selectedUnit.position.x = clickedCol;
 				selectedUnit.position.y = clickedRow;
 
