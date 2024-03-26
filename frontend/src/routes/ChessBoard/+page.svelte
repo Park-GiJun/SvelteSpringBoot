@@ -256,8 +256,6 @@
 		}
 	}
 
-
-
 	function clearLastMovablePositions(ctx, tileSize) {
 		lastMovablePositions.forEach(pos => {
 			ctx.fillStyle = (pos.x + pos.y) % 2 === 0 ? 'WHITE' : 'DarkRed';
@@ -277,21 +275,6 @@
 			image.src = url;
 		});
 	}
-
-
-	function moveUnit(unit, newX, newY) {
-		// 이전 위치 지우기
-		const tileSize = chessboardCanvas.width / 8;
-		ctxUnits.clearRect(unit.position.x * tileSize, unit.position.y * tileSize, tileSize, tileSize);
-
-		// 유닛 위치 업데이트
-		unit.position.x = newX;
-		unit.position.y = newY;
-
-		// 새 위치에 유닛 그리기
-		drawUnit(unit, ctxUnits, tileSize);
-	}
-
 
 	let selectedUnit = null;
 	onMount(() => {
