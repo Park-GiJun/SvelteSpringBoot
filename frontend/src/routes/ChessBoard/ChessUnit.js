@@ -18,57 +18,57 @@ class ChessUnit {
 		console.log(this.position.x + ' ' + this.position.y);
 	}
 
-	getMovablePositions(allUnits) {
+	getMovablePositions(myUnits) {
 		switch (this.grade) {
 			case 'Queen':
-				return this.getMovablePositionsForQueen(allUnits);
+				return this.getMovablePositionsForQueen(myUnits);
 			case 'King':
-				return this.getMovablePositionsForKing(allUnits);
+				return this.getMovablePositionsForKing(myUnits);
 			case 'Bishop':
-				return this.getMovablePositionsForBishop(allUnits);
+				return this.getMovablePositionsForBishop(myUnits);
 			case 'Rook':
-				return this.getMovablePositionsForRook(allUnits);
+				return this.getMovablePositionsForRook(myUnits);
 			case 'Knight':
-				return this.getMovablePositionsForKnight(allUnits);
+				return this.getMovablePositionsForKnight(myUnits);
 			case 'Pawn':
-				return this.getMovablePositionsForPawn(allUnits);
+				return this.getMovablePositionsForPawn(myUnits);
 			default:
 				return [];
 		}
 	}
 
-	getMovablePositionsForQueen(allUnits) {
-		return this.getMovablePositionsInDirections(allUnits, this.directionsForQueenAndKing());
+	getMovablePositionsForQueen(myUnits) {
+		return this.getMovablePositionsInDirections(myUnits, this.directionsForQueenAndKing());
 	}
 
-	getMovablePositionsForKing(allUnits) {
-		return this.getMovablePositionsInDirections(allUnits, this.directionsForQueenAndKing(), 1);
+	getMovablePositionsForKing(myUnits) {
+		return this.getMovablePositionsInDirections(myUnits, this.directionsForQueenAndKing(), 1);
 	}
 
-	getMovablePositionsForBishop(allUnits) {
-		return this.getMovablePositionsInDirections(allUnits, this.directionsForBishop());
+	getMovablePositionsForBishop(myUnits) {
+		return this.getMovablePositionsInDirections(myUnits, this.directionsForBishop());
 	}
 
-	getMovablePositionsForRook(allUnits) {
-		return this.getMovablePositionsInDirections(allUnits, this.directionsForRook());
+	getMovablePositionsForRook(myUnits) {
+		return this.getMovablePositionsInDirections(myUnits, this.directionsForRook());
 	}
 
-	getMovablePositionsForKnight(allUnits) {
-		return this.getMovablePositionsInDirections(allUnits, this.directionsForKnight(), 1);
+	getMovablePositionsForKnight(myUnits) {
+		return this.getMovablePositionsInDirections(myUnits, this.directionsForKnight(), 1);
 	}
 
-	getMovablePositionsForPawn(allUnits) {
+	getMovablePositionsForPawn(myUnits) {
 		let positions = [];
 		let direction = this.color === 'Black' ? 1 : -1;
 		let startRow = this.color === 'Black' ? 1 : 6;
 
 		let firstMovePosition = { x: this.position.x, y: this.position.y + direction };
-		if (this.isPositionValidAndUnoccupied(firstMovePosition.x, firstMovePosition.y, allUnits)) {
+		if (this.isPositionValidAndUnoccupied(firstMovePosition.x, firstMovePosition.y, myUnits)) {
 			positions.push(firstMovePosition);
 
 			if (this.position.y === startRow) {
 				let secondMovePosition = { x: this.position.x, y: this.position.y + (2 * direction) };
-				if (this.isPositionValidAndUnoccupied(secondMovePosition.x, secondMovePosition.y, allUnits)) {
+				if (this.isPositionValidAndUnoccupied(secondMovePosition.x, secondMovePosition.y, myUnits)) {
 					positions.push(secondMovePosition);
 				}
 			}
@@ -77,21 +77,21 @@ class ChessUnit {
 	}
 
 
-	getMovablePositionsInDirections(allUnits, directions, maxSteps = 8) {
+	getMovablePositionsInDirections(myUnits, directions, maxSteps = 8) {
 		let positions = [];
 		directions.forEach(direction => {
 			for (let step = 1; step <= maxSteps; step++) {
 				let newX = this.position.x + direction.dx * step;
 				let newY = this.position.y + direction.dy * step;
-				if (!this.isPositionValidAndUnoccupied(newX, newY, allUnits)) break;
+				if (!this.isPositionValidAndUnoccupied(newX, newY, myUnits)) break;
 				positions.push({ x: newX, y: newY });
 			}
 		});
 		return positions;
 	}
 
-	isPositionValidAndUnoccupied(x, y, allUnits) {
-		return x >= 0 && x < 8 && y >= 0 && y < 8 && !allUnits.some(unit => unit.position.x === x && unit.position.y === y);
+	isPositionValidAndUnoccupied(x, y, myUnits) {
+		return x >= 0 && x < 8 && y >= 0 && y < 8 && !myUnits.some(unit => unit.position.x === x && unit.position.y === y);
 	}
 
 	directionsForQueenAndKing() {

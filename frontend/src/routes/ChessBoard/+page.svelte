@@ -256,6 +256,8 @@
 		}
 	}
 
+
+
 	function clearLastMovablePositions(ctx, tileSize) {
 		lastMovablePositions.forEach(pos => {
 			ctx.fillStyle = (pos.x + pos.y) % 2 === 0 ? 'WHITE' : 'DarkRed';
@@ -265,17 +267,7 @@
 	}
 
 	function drawUnits(ctx, tileSize) {
-		blackUnits.forEach(unit => {
-			const url = URL.createObjectURL(unit.getSvgBlob());
-			const image = new Image();
-			image.onload = function() {
-				ctx.drawImage(image, unit.position.x * tileSize, unit.position.y * tileSize, tileSize, tileSize);
-				URL.revokeObjectURL(url);
-			};
-			image.src = url;
-		});
-
-		whiteUnits.forEach(unit => {
+		[...blackUnits, ...whiteUnits].forEach(unit => {
 			const url = URL.createObjectURL(unit.getSvgBlob());
 			const image = new Image();
 			image.onload = function() {
@@ -286,6 +278,22 @@
 		});
 	}
 
+
+	function moveUnit(unit, newX, newY) {
+		// 이전 위치 지우기
+		const tileSize = chessboardCanvas.width / 8;
+		ctxUnits.clearRect(unit.position.x * tileSize, unit.position.y * tileSize, tileSize, tileSize);
+
+		// 유닛 위치 업데이트
+		unit.position.x = newX;
+		unit.position.y = newY;
+
+		// 새 위치에 유닛 그리기
+		drawUnit(unit, ctxUnits, tileSize);
+	}
+
+
+	let selectedUnit = null;
 	onMount(() => {
 		drawChessboard();
 		const chessboardCanvas = document.getElementById('chessboard');
@@ -302,43 +310,41 @@
 			const clickedCol = Math.floor(x / tileSize);
 			const clickedRow = Math.floor(y / tileSize);
 
+			const isMovablePositionClicked = lastMovablePositions.some(position => {
+				const centerX = position.x * tileSize + tileSize / 2;
+				const centerY = position.y * tileSize + tileSize / 2;
+				return Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2) <= Math.pow(tileSize / 4, 2);
+			});
+
 			clearLastMovablePositions(ctxUnits, tileSize);
 			drawChessboard();
 			drawUnits(ctxUnits, tileSize);
 
-			blackUnits.forEach(unit => {
+			[...blackUnits, ...whiteUnits].forEach(unit => {
 				if (unit.position.x === clickedCol && unit.position.y === clickedRow) {
-					console.log(`${unit.side} ${unit.color} ${unit.grade} Clicked`);
-					console.log('Unit Position : ' + unit.position.x + ' ' + unit.position.y);
-					let movablePositions = unit.getMovablePositions(blackUnits);
+					selectedUnit = unit;
 
+					const movablePositions = unit.getMovablePositions([...blackUnits, ...whiteUnits]);
 					movablePositions.forEach(pos => {
 						ctxUnits.beginPath();
-						ctxUnits.arc(pos.x * tileSize + tileSize / 2, pos.y * tileSize + tileSize / 2, tileSize / 4, 0, Math.PI * 2, false);
-						ctxUnits.fillStyle = 'GRAY';
+						ctxUnits.arc(pos.x * tileSize + tileSize / 2, pos.y * tileSize + tileSize / 2, tileSize / 4, 0, Math.PI * 2);
+						ctxUnits.fillStyle = 'gray';
 						ctxUnits.fill();
-
-						lastMovablePositions.push({ x: pos.x, y: pos.y });
+						lastMovablePositions.push(pos);
 					});
 				}
 			});
-			whiteUnits.forEach(unit => {
-				if (unit.position.x === clickedCol && unit.position.y === clickedRow) {
-					console.log(`${unit.side} ${unit.color} ${unit.grade} Clicked`);
-					console.log('Unit Position : ' + unit.position.x + ' ' + unit.position.y);
-					let movablePositions = unit.getMovablePositions(whiteUnits);
+			if (isMovablePositionClicked) {
 
-					movablePositions.forEach(pos => {
-						ctxUnits.beginPath();
-						ctxUnits.arc(pos.x * tileSize + tileSize / 2, pos.y * tileSize + tileSize / 2, tileSize / 4, 0, Math.PI * 2, false);
-						ctxUnits.fillStyle = 'GRAY';
-						ctxUnits.fill();
+				ctxUnits.clearRect(selectedUnit.position.x, selectedUnit.y, tileSize / 8, tileSize / 8);
+				selectedUnit.position.x = clickedCol;
+				selectedUnit.position.y = clickedRow;
 
-						lastMovablePositions.push({ x: pos.x, y: pos.y });
-					});
-					lastMovablePositions = movablePositions.map(pos => ({ x: pos.x, y: pos.y }));
-				}
-			});
+
+				drawChessboard();
+				drawUnits(ctxUnits, tileSize);
+			}
+
 		});
 	});
 </script>
@@ -365,12 +371,7 @@
         border: black 1px solid;
     }
 
-    #chessboard {
-        z-index: 1;
-    }
-
     #chessUnits {
         background-color: rgba(0, 0, 0, 0);
-        z-index: 50;
     }
 </style>
