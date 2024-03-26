@@ -317,8 +317,6 @@
 			});
 
 			clearLastMovablePositions(ctxUnits, tileSize);
-			drawChessboard();
-			drawUnits(ctxUnits, tileSize);
 
 			[...blackUnits, ...whiteUnits].forEach(unit => {
 				if (unit.position.x === clickedCol && unit.position.y === clickedRow) {
@@ -340,11 +338,9 @@
 				selectedUnit.position.x = clickedCol;
 				selectedUnit.position.y = clickedRow;
 
-
 				drawChessboard();
 				drawUnits(ctxUnits, tileSize);
 			}
-
 		});
 	});
 </script>
