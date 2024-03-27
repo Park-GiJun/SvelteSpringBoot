@@ -11,13 +11,6 @@ class ChessUnit {
 		return new Blob([this.svg], { type: 'image/svg+xml;charset=utf-8' });
 	}
 
-	updatePosition(x, y){
-		this.position.x += x;
-		this.position.y += y;
-
-		console.log(this.position.x + ' ' + this.position.y);
-	}
-
 	getMovablePositions(myUnits) {
 		switch (this.grade) {
 			case 'Queen':
@@ -37,8 +30,22 @@ class ChessUnit {
 		}
 	}
 
+	getKillablePositions(myUnits, oppositeUnits) {
+		let killablePositions = [];
+		this.getMovablePositions(myUnits).forEach(pos => {
+			if (oppositeUnits.some(unit => unit.position.x === pos.x && unit.position.y === pos.y)) {
+				killablePositions.push(pos);
+			}
+		});
+		return killablePositions;
+	}
+
 	getMovablePositionsForQueen(myUnits) {
 		return this.getMovablePositionsInDirections(myUnits, this.directionsForQueenAndKing());
+	}
+
+	getKillablePositionForQueen(myUnits, oppositeUnits) {
+		return this;
 	}
 
 	getMovablePositionsForKing(myUnits) {
@@ -83,7 +90,24 @@ class ChessUnit {
 			for (let step = 1; step <= maxSteps; step++) {
 				let newX = this.position.x + direction.dx * step;
 				let newY = this.position.y + direction.dy * step;
-				if (!this.isPositionValidAndUnoccupied(newX, newY, myUnits)) break;
+				if (!this.isPositionValidAndUnoccupied(newX, newY, myUnits)) {
+					break;
+				}
+				positions.push({ x: newX, y: newY });
+			}
+		});
+		return positions;
+	}
+
+	getKillablePositionsInDirections(myUnits, directions, maxSteps = 8) {
+		let positions = [];
+		directions.forEach(direction => {
+			for (let step = 1; step <= maxSteps; step++) {
+				let newX = this.position.x + direction.dx * step;
+				let newY = this.position.y + direction.dy * step;
+				if (!this.isPositionValidAndUnoccupied(newX, newY, myUnits)) {
+					break;
+				}
 				positions.push({ x: newX, y: newY });
 			}
 		});
@@ -96,8 +120,7 @@ class ChessUnit {
 
 	directionsForQueenAndKing() {
 		return [{ dx: 1, dy: 0 }, { dx: -1, dy: 0 }, { dx: 0, dy: 1 }, { dx: 0, dy: -1 }, { dx: 1, dy: 1 }, {
-			dx: 1,
-			dy: -1
+			dx: 1, dy: -1
 		}, { dx: -1, dy: 1 }, { dx: -1, dy: -1 }];
 	}
 
@@ -111,9 +134,9 @@ class ChessUnit {
 
 	directionsForKnight() {
 		return [{ dx: 1, dy: 2 }, { dx: -1, dy: 2 }, { dx: 1, dy: -2 }, { dx: -1, dy: -2 }, { dx: -2, dy: 1 }, {
-			dx: -2,
-			dy: -1
+			dx: -2, dy: -1
 		}, { dx: 2, dy: 1 }, { dx: 2, dy: -1 }];
 	}
 }
+
 export { ChessUnit };

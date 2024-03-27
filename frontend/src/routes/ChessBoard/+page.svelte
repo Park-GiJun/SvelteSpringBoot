@@ -249,7 +249,7 @@
 
 			for (let row = 0; row < 8; row++) {
 				for (let col = 0; col < 8; col++) {
-					ctx.fillStyle = (row + col) % 2 === 0 ? 'WHITE' : 'DarkRed';
+					ctx.fillStyle = (row + col) % 2 === 0 ? 'WHITE' : 'skyblue';
 					ctx.fillRect(col * tileSize, row * tileSize, tileSize, tileSize);
 				}
 			}
@@ -277,6 +277,8 @@
 	}
 
 	let selectedUnit = null;
+	let turnCheck = false;
+
 	onMount(() => {
 		drawChessboard();
 		const chessboardCanvas = document.getElementById('chessboard');
@@ -284,6 +286,7 @@
 		const ctxChessboard = chessboardCanvas.getContext('2d');
 		const ctxUnits = unitsCanvas.getContext('2d');
 		let tileSize = chessboardCanvas.width / 8;
+
 		drawUnits(ctxUnits, tileSize);
 
 		unitsCanvas.addEventListener('click', function(event) {
@@ -300,21 +303,57 @@
 			});
 
 			clearLastMovablePositions(ctxUnits, tileSize);
+			drawUnits(ctxUnits, tileSize)
 
-			[...blackUnits, ...whiteUnits].forEach(unit => {
-				if (unit.position.x === clickedCol && unit.position.y === clickedRow) {
-					selectedUnit = unit;
+			if(turnCheck){
+				whiteUnits.forEach(unit => {
+					if (unit.position.x === clickedCol && unit.position.y === clickedRow) {
+						selectedUnit = unit;
 
-					const movablePositions = unit.getMovablePositions([...blackUnits, ...whiteUnits]);
-					movablePositions.forEach(pos => {
-						ctxUnits.beginPath();
-						ctxUnits.arc(pos.x * tileSize + tileSize / 2, pos.y * tileSize + tileSize / 2, tileSize / 4, 0, Math.PI * 2);
-						ctxUnits.fillStyle = 'gray';
-						ctxUnits.fill();
-						lastMovablePositions.push(pos);
-					});
-				}
-			});
+						const movablePositions = unit.getMovablePositions(whiteUnits);
+						const killablePositions = unit.getKillablePositions(whiteUnits, blackUnits);
+						movablePositions.forEach(pos => {
+							ctxUnits.beginPath();
+							ctxUnits.arc(pos.x * tileSize + tileSize / 2, pos.y * tileSize + tileSize / 2, tileSize / 4, 0, Math.PI * 2);
+							ctxUnits.fillStyle = 'gray';
+							ctxUnits.fill();
+							lastMovablePositions.push(pos);
+						});
+
+						killablePositions.forEach(pos =>{
+							ctxUnits.beginPath();
+							ctxUnits.arc(pos.x * tileSize + tileSize / 2, pos.y * tileSize + tileSize / 2, tileSize / 4, 0, Math.PI * 2);
+							ctxUnits.fillStyle = 'red';
+							ctxUnits.fill();
+							lastMovablePositions.push(pos);
+						});
+					}
+				});
+			} else {
+				blackUnits.forEach(unit => {
+					if (unit.position.x === clickedCol && unit.position.y === clickedRow) {
+						selectedUnit = unit;
+
+						const movablePositions = unit.getMovablePositions(blackUnits);
+						const killablePositions = unit.getKillablePositions(blackUnits, whiteUnits);
+						movablePositions.forEach(pos => {
+							ctxUnits.beginPath();
+							ctxUnits.arc(pos.x * tileSize + tileSize / 2, pos.y * tileSize + tileSize / 2, tileSize / 4, 0, Math.PI * 2);
+							ctxUnits.fillStyle = 'gray';
+							ctxUnits.fill();
+							lastMovablePositions.push(pos);
+						});
+
+						killablePositions.forEach(pos =>{
+							ctxUnits.beginPath();
+							ctxUnits.arc(pos.x * tileSize + tileSize / 2, pos.y * tileSize + tileSize / 2, tileSize / 4, 0, Math.PI * 2);
+							ctxUnits.fillStyle = 'red';
+							ctxUnits.fill();
+							lastMovablePositions.push(pos);
+						});
+					}
+				});
+			}
 			if (isMovablePositionClicked) {
 
 				ctxUnits.clearRect(selectedUnit.position.x * tileSize, selectedUnit.position.y * tileSize, tileSize, tileSize);
@@ -323,6 +362,7 @@
 
 				drawChessboard();
 				drawUnits(ctxUnits, tileSize);
+				turnCheck = !turnCheck;
 			}
 		});
 	});
@@ -332,16 +372,19 @@
 <div class="canvas-container">
 	<canvas height="800" id="chessboard" width="800"></canvas>
 	<canvas height="800" id="chessUnits" width="800"></canvas>
-	<p>{$nickName}</p>
-</div>
 
+</div>
+<p class="check">닉네임 : {$nickName}</p>
 
 <style>
     .canvas-container {
         position: relative;
-        width: 600px;
-        height: 600px;
     }
+
+		.check{
+				margin-left: 900px;
+				position: fixed;
+		}
 
     #chessboard, #chessUnits {
         position: absolute;
