@@ -7,6 +7,7 @@ class ChessUnit {
 		this.position = position;
 	}
 
+	deadUnits = null;
 	getSvgBlob() {
 		return new Blob([this.svg], { type: 'image/svg+xml;charset=utf-8' });
 	}
@@ -43,11 +44,6 @@ class ChessUnit {
 	getMovablePositionsForQueen(myUnits) {
 		return this.getMovablePositionsInDirections(myUnits, this.directionsForQueenAndKing());
 	}
-
-	getKillablePositionForQueen(myUnits, oppositeUnits) {
-		return this;
-	}
-
 	getMovablePositionsForKing(myUnits) {
 		return this.getMovablePositionsInDirections(myUnits, this.directionsForQueenAndKing(), 1);
 	}
@@ -85,21 +81,6 @@ class ChessUnit {
 
 
 	getMovablePositionsInDirections(myUnits, directions, maxSteps = 8) {
-		let positions = [];
-		directions.forEach(direction => {
-			for (let step = 1; step <= maxSteps; step++) {
-				let newX = this.position.x + direction.dx * step;
-				let newY = this.position.y + direction.dy * step;
-				if (!this.isPositionValidAndUnoccupied(newX, newY, myUnits)) {
-					break;
-				}
-				positions.push({ x: newX, y: newY });
-			}
-		});
-		return positions;
-	}
-
-	getKillablePositionsInDirections(myUnits, directions, maxSteps = 8) {
 		let positions = [];
 		directions.forEach(direction => {
 			for (let step = 1; step <= maxSteps; step++) {
