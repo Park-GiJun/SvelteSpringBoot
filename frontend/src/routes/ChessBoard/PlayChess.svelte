@@ -239,10 +239,12 @@
 	];
 
 	let lastMovablePositions = [];
-	let deadPositions =[];
+	let deadPositions = [];
 
 	let selectedUnit = null;
 	let turnCheck = false;
+
+	let data =[];
 
 	function drawChessboard() {
 		const chessboardCanvas = document.getElementById('chessboard');
@@ -281,8 +283,16 @@
 	}
 
 
-
 	onMount(() => {
+		const urlParams = new URL(location.href).searchParams;
+
+		const roomId = urlParams.get('roomId');
+
+		console.log(roomId);
+
+		getRoomInfo(roomId);
+
+
 		drawChessboard();
 		const chessboardCanvas = document.getElementById('chessboard');
 		const unitsCanvas = document.getElementById('chessUnits');
@@ -306,9 +316,9 @@
 			});
 
 			clearLastMovablePositions(ctxUnits, tileSize);
-			drawUnits(ctxUnits, tileSize)
+			drawUnits(ctxUnits, tileSize);
 
-			if(turnCheck){
+			if (turnCheck) {
 				whiteUnits.forEach(unit => {
 					if (unit.position.x === clickedCol && unit.position.y === clickedRow) {
 						selectedUnit = unit;
@@ -323,7 +333,7 @@
 							lastMovablePositions.push(pos);
 						});
 
-						killablePositions.forEach(pos =>{
+						killablePositions.forEach(pos => {
 							ctxUnits.beginPath();
 							ctxUnits.arc(pos.x * tileSize + tileSize / 2, pos.y * tileSize + tileSize / 2, tileSize / 4, 0, Math.PI * 2);
 							ctxUnits.fillStyle = 'red';
@@ -348,7 +358,7 @@
 							lastMovablePositions.push(pos);
 						});
 
-						killablePositions.forEach(pos =>{
+						killablePositions.forEach(pos => {
 							console.log(pos.x + ' ' + pos.y);
 							ctxUnits.beginPath();
 							ctxUnits.arc(pos.x * tileSize + tileSize / 2, pos.y * tileSize + tileSize / 2, tileSize / 4, 0, Math.PI * 2);
@@ -374,14 +384,29 @@
 				drawUnits(ctxUnits, tileSize);
 				turnCheck = !turnCheck;
 
+
 			}
-		});
+		})
+
 	});
+
+
+	async function getRoomInfo(roodId) {
+		const response = await fetch('/api/roomInfo');
+		const data = response.json();
+		console.log(data);
+	}
 </script>
 
 <div>
 	<p>안녕, {$nickName}</p>
 	<p>turn : {turnCheck ? 'white' : 'black'}</p>
+</div>
+
+<div>
+	<p>{data.id}</p>
+	<p>{data.whitePlayer}</p>
+	<p>{data.blackPlayer}</p>
 </div>
 
 <div class="canvas-container">

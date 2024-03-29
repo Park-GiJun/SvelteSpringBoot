@@ -1,61 +1,59 @@
 <script>
 	import { nickName } from '../Chess/NickName.js';
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 
-	let rooms;
+	let rooms =[];
+
+	let nickNameValue;
+
+	nickName.subscribe(value => nickNameValue = value);
+
 	onMount(async () => {
-		const response = await fetch('/api/getChessRoomList');
+		const response = await fetch('/api/roomLists');
+		rooms =[]
 		rooms = await response.json();
 	});
 
 
 	function enterRoom(roomId) {
-		fetch('/api/enterRoom/{$roomId}', {
-			method: 'GET'
-		});
+		goto(`/ChessBoard?roomId=${roomId}`);
 	}
 
-	function createRoom(){
-		fetch('api/createRoom',{
-			method:'GET'
+	function createRoom() {
+		fetch(`/api/createRoom?nickName=${nickNameValue}`, {
+			method: 'GET'
 		})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('Network response was not ok.');
+				}
+				return response.json();
+			})
+			.then(data => {
+				rooms = data;
+			})
 	}
+
 </script>
 
 <h2>Room</h2>
 <p>Hello, {$nickName}</p>
 <a href="/ChessBoard">체스</a>
-<!--{#if rooms.length < 1 || rooms === null}-->
-<!--	<p>정보가 없습니다.</p>-->
-<!--{:else }-->
-<!--	{#each rooms as room}-->
-<!--		<div id="{room.id}">-->
-<!--			<p>{room.whitePlayer}</p>-->
-<!--			<p>{room.blackPlayer}</p>-->
-<!--			<button>입장</button>-->
-<!--		</div>-->
-<!--	{/each}-->
-<!--{/if}-->
-
 <div class="roomsDiv">
-	<div class="roomDiv">
-		<p>Black : aaa</p>
-		<p>White : bbb</p>
-		<button>입장</button>
-	</div>
-	<div class="roomDiv">
-		<p>Black : aaa</p>
-		<p>White : bbb</p>
-		<button>입장</button>
-	</div>
-	<div class="roomDiv">
-		<p>Black : aaa</p>
-		<p>White : bbb</p>
-		<button>입장</button>
-	</div>
+	{#if rooms.length > 0}
+		{#each rooms as room}
+			<div id="{room.id}" class="roomDiv">
+				<p>{room.whitePlayer}</p>
+				<p>{room.blackPlayer}</p>
+				<button on:click={()=> enterRoom(room.id)}>{room.id}입장</button>
+			</div>
+		{/each}
+	{:else }
+		<p>정보가 없습니다.</p>
+	{/if}
 </div>
-
-<button>방 만들기</button>
+<button on:click={createRoom}>방 만들기</button>
 
 
 
