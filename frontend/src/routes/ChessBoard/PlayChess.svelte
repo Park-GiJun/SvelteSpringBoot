@@ -398,21 +398,19 @@
 				});
 			}
 			if (isMovablePositionClicked) {
-				ctxUnits.clearRect(selectedUnit.position.x * tileSize, selectedUnit.position.y * tileSize, tileSize, tileSize);
+
 				const enemyUnits = turnCheck ? blackUnits : whiteUnits;
 				const enemyUnitIndex = enemyUnits.findIndex(unit => unit.position.x === clickedCol && unit.position.y === clickedRow);
 
 				if (enemyUnitIndex !== -1) {
 					enemyUnits.splice(enemyUnitIndex, 1);
 				}
-
+				ctxUnits.clearRect(selectedUnit.position.x * tileSize, selectedUnit.position.y * tileSize, tileSize, tileSize);
 				selectedUnit.position.x = clickedCol;
 				selectedUnit.position.y = clickedRow;
 				drawChessboard();
 				drawUnits(ctxUnits, tileSize);
 				turnCheck = !turnCheck;
-
-
 			}
 		})
 	});
@@ -420,7 +418,7 @@
 
 	async function getRoomInfo(roodId) {
 		const response = await fetch('/api/roomInfo');
-		const data = response.json();
+		const data = await response.json();
 		console.log(data);
 	}
 </script>

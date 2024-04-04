@@ -38,8 +38,23 @@ class ChessUnit {
 				killablePositions.push(pos);
 			}
 		});
+
+		if (this.grade === 'Pawn') {
+			let direction = this.color === 'Black' ? 1 : -1;
+			let diagonalPositions = [
+				{ x: this.position.x + 1, y: this.position.y + direction },
+				{ x: this.position.x - 1, y: this.position.y + direction }
+			];
+
+			diagonalPositions.forEach(diagonalPos => {
+				if (oppositeUnits.some(unit => unit.position.x === diagonalPos.x && unit.position.y === diagonalPos.y)) {
+					killablePositions.push(diagonalPos);
+				}
+			});
+		}
 		return killablePositions;
 	}
+
 
 	getMovablePositionsForQueen(myUnits) {
 		return this.getMovablePositionsInDirections(myUnits, this.directionsForQueenAndKing());
